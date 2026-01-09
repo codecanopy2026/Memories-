@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vartika's Photo Book</title>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 15px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Background Decorations */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        radial-gradient(circle at 20% 80%, rgba(255,255,255,0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.3) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(255,182,193,0.4) 0%, transparent 30%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Heading Section */
+    .heading {
+      text-align: center;
+      padding: 20px;
+      width: 100%;
+      position: relative;
+    }
+
+    .heading-decoration {
+      font-size: 24px;
+      margin-bottom: 5px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    .heading h1 {
+      font-family: 'Dancing Script', cursive;
+      font-size: 36px;
+      color: #d63384;
+      text-shadow: 
+        2px 2px 4px rgba(255,255,255,0.8),
+        0 0 20px rgba(214,51,132,0.3);
+      margin-bottom: 8px;
+      letter-spacing: 2px;
+    }
+
+    .heading p {
+      font-size: 14px;
+      color: #8b5a7b;
+      font-weight: 500;
+      background: rgba(255,255,255,0.5);
+      padding: 5px 15px;
+      border-radius: 20px;
+      display: inline-block;
+    }
+
+    /* Decorative Hearts around heading */
+    .heart-left, .heart-right {
+      position: absolute;
+      top: 50%;
+      font-size: 20px;
+      opacity: 0.7;
+    }
+    .heart-left { left: 10px; }
+    .heart-right { right: 10px; }
+
+    /* Book Container */
+    .book-container {
+      background: linear-gradient(145deg, #ffffff, #fff5f8);
+      border-radius: 25px;
+      box-shadow: 
+        0 20px 60px rgba(214,51,132,0.3),
+        0 0 0 5px rgba(255,255,255,0.8),
+        inset 0 0 30px rgba(255,182,193,0.2);
+      overflow: hidden;
+      width: 100%;
+      max-width: 400px;
+      border: 3px solid rgba(255,182,193,0.5);
+      position: relative;
+    }
+
+    /* Decorative Corner Ribbons */
+    .book-container::before {
+      content: '💕';
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      font-size: 30px;
+      z-index: 10;
+      filter: drop-shadow(2px 2px 3px rgba(0,0,0,0.2));
+    }
+
+    .book-container::after {
+      content: '✨';
+      position: absolute;
+      top: -5px;
+      left: -5px;
+      font-size: 25px;
+      z-index: 10;
+    }
+
+    /* Page Display */
+    .page-display {
+      width: 100%;
+      height: 480px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(180deg, #fff9fb 0%, #fff0f5 100%);
+      overflow: hidden;
+      position: relative;
+      padding: 15px;
+    }
+
+    /* Image Frame */
+    .image-frame {
+      background: white;
+      padding: 10px;
+      border-radius: 15px;
+      box-shadow: 
+        0 8px 25px rgba(0,0,0,0.15),
+        0 0 0 3px #ffc0cb,
+        0 0 0 6px rgba(255,192,203,0.3);
+      max-width: 95%;
+      max-height: 95%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .page-display img {
+      max-width: 100%;
+      max-height: 430px;
+      object-fit: contain;
+      border-radius: 10px;
+    }
+
+    /* Corner Decorations inside page display */
+    .corner-decor {
+      position: absolute;
+      font-size: 18px;
+      opacity: 0.5;
+    }
+    .corner-decor.top-left { top: 10px; left: 10px; }
+    .corner-decor.top-right { top: 10px; right: 10px; }
+    .corner-decor.bottom-left { bottom: 10px; left: 10px; }
+    .corner-decor.bottom-right { bottom: 10px; right: 10px; }
+
+    /* Navigation */
+    .navigation {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 15px;
+      background: linear-gradient(135deg, #d63384, #e91e8c);
+      position: relative;
+    }
+
+    .navigation::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #ffc0cb, #fff, #ffc0cb);
+    }
+
+    .nav-btn {
+      background: linear-gradient(145deg, #ffffff, #ffe4ec);
+      color: #d63384;
+      border: none;
+      padding: 12px 22px;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 
+        0 4px 15px rgba(0,0,0,0.2),
+        inset 0 2px 5px rgba(255,255,255,0.8);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .nav-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    }
+
+    .nav-btn:active {
+      transform: translateY(0);
+    }
+
+    .nav-btn:disabled {
+      background: #ccc;
+      color: #888;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .page-info {
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+      background: rgba(255,255,255,0.2);
+      padding: 8px 15px;
+      border-radius: 20px;
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+
+    /* Go to Page Section */
+    .goto-section {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      padding: 15px;
+      background: linear-gradient(135deg, #8b5a7b, #a0527e);
+      flex-wrap: wrap;
+    }
+
+    .goto-section span {
+      color: #ffe4ec;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .goto-section input {
+      width: 70px;
+      padding: 10px;
+      border: 2px solid #ffc0cb;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 15px;
+      font-weight: 600;
+      color: #d63384;
+      background: white;
+      outline: none;
+    }
+
+    .goto-section input:focus {
+      border-color: #d63384;
+      box-shadow: 0 0 10px rgba(214,51,132,0.3);
+    }
+
+    .goto-section button {
+      background: linear-gradient(145deg, #28a745, #20c997);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 4px 10px rgba(40,167,69,0.3);
+      transition: all 0.3s ease;
+    }
+
+    .goto-section button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(40,167,69,0.4);
+    }
+
+    /* Progress Bar */
+    .progress-container {
+      width: 100%;
+      height: 6px;
+      background: rgba(255,255,255,0.3);
+      position: relative;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #ffc0cb, #fff, #ff69b4);
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 20px;
+      text-align: center;
+      color: #8b5a7b;
+      font-size: 12px;
+      padding: 10px;
+      background: rgba(255,255,255,0.5);
+      border-radius: 15px;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .footer span {
+      color: #d63384;
+    }
+
+    /* Floating Decorative Elements */
+    .floating-heart {
+      position: fixed;
+      font-size: 20px;
+      opacity: 0.3;
+      pointer-events: none;
+    }
+    .fh1 { top: 10%; left: 5%; }
+    .fh2 { top: 30%; right: 8%; }
+    .fh3 { bottom: 20%; left: 10%; }
+    .fh4 { bottom: 40%; right: 5%; }
+    .fh5 { top: 60%; left: 3%; }
+
+    /* Quick Jump Buttons */
+    .quick-jump {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px;
+      background: linear-gradient(135deg, #f8e1e8, #fff0f5);
+      flex-wrap: wrap;
+    }
+
+    .quick-btn {
+      background: white;
+      color: #d63384;
+      border: 2px solid #ffc0cb;
+      padding: 6px 12px;
+      border-radius: 15px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .quick-btn:hover {
+      background: #d63384;
+      color: white;
+      border-color: #d63384;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Decorations -->
+  <div class="floating-heart fh1">💖</div>
+  <div class="floating-heart fh2">✨</div>
+  <div class="floating-heart fh3">💕</div>
+  <div class="floating-heart fh4">🌸</div>
+  <div class="floating-heart fh5">💗</div>
+
+  <!-- Heading -->
+  <div class="heading">
+    <span class="heart-left">💝</span>
+    <span class="heart-right">💝</span>
+    <div class="heading-decoration">✨💖✨</div>
+    <h1>A Family's Tale</h1>
+    <p>📸 Beautiful Memories Together 💕</p>
+  </div>
+
+  <!-- Book -->
+  <div class="book-container">
+    
+    <!-- Progress Bar -->
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar" style="width: 0.24%;"></div>
+    </div>
+
+    <!-- Quick Jump Buttons -->
+    <div class="quick-jump">
+      <button class="quick-btn" onclick="jumpTo(1)">First</button>
+      <button class="quick-btn" onclick="jumpTo(50)">50</button>
+      <button class="quick-btn" onclick="jumpTo(100)">100</button>
+      <button class="quick-btn" onclick="jumpTo(200)">200</button>
+      <button class="quick-btn" onclick="jumpTo(300)">300</button>
+      <button class="quick-btn" onclick="jumpTo(422)">Last</button>
+    </div>
+
+    <!-- Current Page Display -->
+    <div class="page-display">
+      <span class="corner-decor top-left">🌸</span>
+      <span class="corner-decor top-right">🌸</span>
+      <span class="corner-decor bottom-left">💮</span>
+      <span class="corner-decor bottom-right">💮</span>
+      
+      <div class="image-frame">
+        <img id="currentImage" src="vartika (1).jpg" alt="Photo">
+      </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="navigation">
+      <button class="nav-btn" id="prevBtn" onclick="prevPage()">
+        ◀️ Prev
+      </button>
+      <span class="page-info" id="pageInfo">📖 1 / 422</span>
+      <button class="nav-btn" id="nextBtn" onclick="nextPage()">
+        Next ▶️
+      </button>
+    </div>
+
+    <!-- Go to Page -->
+    <div class="goto-section">
+      <span>🔍 Jump to page:</span>
+      <input type="number" id="pageInput" min="1" max="422" value="1">
+      <button onclick="goToPage()">✨ Go!</button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    Made with <span>❤️</span> for <span>Vartika</span> 💕
+    <br>Total: 422 Beautiful Photos 📸
+  </div>
+
+  <script>
+    let currentPage = 1;
+    const totalPages = 422;
+
+    function updatePage() {
+      const img = document.getElementById('currentImage');
+      img.src = `vartika (${currentPage}).jpg`;
+      
+      document.getElementById('pageInfo').textContent = `📖 ${currentPage} / ${totalPages}`;
+      document.getElementById('pageInput').value = currentPage;
+      
+      // Update Progress Bar
+      const progress = (currentPage / totalPages) * 100;
+      document.getElementById('progressBar').style.width = progress + '%';
+      
+      // Disable/Enable buttons
+      document.getElementById('prevBtn').disabled = (currentPage === 1);
+      document.getElementById('nextBtn').disabled = (currentPage === totalPages);
+    }
+
+    function nextPage() {
+      if (currentPage < totalPages) {
+        currentPage++;
+        updatePage();
+      }
+    }
+
+    function prevPage() {
+      if (currentPage > 1) {
+        currentPage--;
+        updatePage();
+      }
+    }
+
+    function goToPage() {
+      let page = parseInt(document.getElementById('pageInput').value);
+      if (page >= 1 && page <= totalPages) {
+        currentPage = page;
+        updatePage();
+      } else {
+        alert('🚫 Please enter valid page (1-422)');
+      }
+    }
+
+    function jumpTo(page) {
+      currentPage = page;
+      updatePage();
+    }
+
+    // Swipe Support for Mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    document.querySelector('.page-display').addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    });
+
+    document.querySelector('.page-display').addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+    });
+
+    function handleSwipe() {
+      const swipeThreshold = 50;
+      if (touchStartX - touchEndX > swipeThreshold) {
+        nextPage();
+      }
+      if (touchEndX - touchStartX > swipeThreshold) {
+        prevPage();
+      }
+    }
+
+    // Keyboard Support
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') nextPage();
+      if (e.key === 'ArrowLeft') prevPage();
+    });
+
+    // Initialize
+    updatePage();
+  </script>
+
+</body>
+</html>
